@@ -87,3 +87,10 @@ target/
 
 # Mypy cache
 .mypy_cache/
+
+# notebooks for drafting
+notebooks/Dynamics in NetSci - project.ipynb
+notebooks/Dynamics in networks - algorithms.ipynb
+notebooks/Intro-net-analysis-Tasks.ipynb
+notebooks/Intro-net-analysis.ipynb
+notebooks/training.ipynb
