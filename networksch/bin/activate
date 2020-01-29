@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/home/kim/pet-projects/networksch/networksch"
+VIRTUAL_ENV="/home/kim/juche/pet-projects/networksch/networksch"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
