@@ -8,94 +8,10 @@ from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 from datetime import timedelta, datetime
-import argparse
 import sys
 import json
 import ssl
 import urllib.request
-
-
-def parse_arguments():
-    parser = argparse.ArgumentParser()
-    
-    parser.add_argument(
-        '--countries',
-        action='store',
-        dest='countries',
-        help='Countries on CSV format. ' +
-        'It must exact match the data names or you will get out of bonds error.',
-        metavar='COUNTRY_CSV',
-        type=str,
-        default="")
-    
-    parser.add_argument(
-        '--download-data',
-        action='store_true',
-        dest='download_data',
-        help='Download fresh data and then run',
-        default=False
-    )
-
-    parser.add_argument(
-        '--start-date',
-        required=False,
-        action='store',
-        dest='start_date',
-        help='Start date on MM/DD/YY format ... I know ...' +
-        'It defaults to first data available 1/22/20',
-        metavar='START_DATE',
-        type=str,
-        default="1/22/20")
-
-    parser.add_argument(
-        '--prediction-days',
-        required=False,
-        dest='predict_range',
-        help='Days to predict with the model. Defaults to 150',
-        metavar='PREDICT_RANGE',
-        type=int,
-        default=150)
-
-    parser.add_argument(
-        '--S_0',
-        required=False,
-        dest='s_0',
-        help='S_0. Defaults to 100000',
-        metavar='S_0',
-        type=int,
-        default=100000)
-
-    parser.add_argument(
-        '--I_0',
-        required=False,
-        dest='i_0',
-        help='I_0. Defaults to 2',
-        metavar='I_0',
-        type=int,
-        default=2)
-
-    parser.add_argument(
-        '--R_0',
-        required=False,
-        dest='r_0',
-        help='R_0. Defaults to 0',
-        metavar='R_0',
-        type=int,
-        default=10)
-
-    args = parser.parse_args()
-
-    country_list = []
-    if args.countries != "":
-        try:
-            countries_raw = args.countries
-            country_list = countries_raw.split(",")
-        except Exception:
-            sys.exit("QUIT: countries parameter is not on CSV format")
-    else:
-        sys.exit("QUIT: You must pass a country list on CSV format.")
-
-    return (country_list, args.download_data, args.start_date, args.predict_range, args.s_0, args.i_0, args.r_0)
 
 
 def sumCases_province(input_file, output_file):
@@ -195,11 +111,15 @@ class Learner(object):
         recovered = self.load_recovered(self.country)
         death = self.load_dead(self.country)
         data = (self.load_confirmed(self.country) - recovered - death)
-        
-        optimal = minimize(loss, [0.001, 0.001], args=(data, recovered, self.s_0, self.i_0, self.r_0), method='L-BFGS-B', bounds=[(0.00000001, 0.4), (0.00000001, 0.4)])
-        print(optimal)
-        beta, gamma = optimal.x
-        new_index, extended_actual, extended_recovered, extended_death, prediction = self.predict(beta, gamma, data, recovered, death, self.country, self.s_0, self.i_0, self.r_0)
+        beta=0.00000142
+        gamma=0.00856452
+        r_0=0.00016579
+        if beta:
+            pass
+        else:
+            optimal = minimize(loss, [0.001, 0.001], args=(data, recovered, self.s_0, self.i_0, self.r_0), method='L-BFGS-B', bounds=[(0.00000001, 0.4), (0.00000001, 0.4)], options={'maxiter': 100, 'gtol': 1e-6, 'disp': True})
+            print(optimal)
+        new_index, extended_actual, extended_recovered, extended_death, prediction = self.predict(beta, gamma, data, recovered, death, self.country, self.s_0, self.i_0, r_0)
         df = pd.DataFrame({'Infected data': extended_actual, 'Recovered data': extended_recovered, 'Death data': extended_death, 'Susceptible': prediction.y[0], 'Infected': prediction.y[1], 'Recovered': prediction.y[2]}, index=new_index)
         fig, ax = plt.subplots(figsize=(15, 10))
         ax.set_title(self.country)
