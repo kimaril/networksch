@@ -50,7 +50,7 @@ python-dateutil==2.8.1
 python-igraph==0.8.0
 python-louvain==0.14
 pytz==2019.3
-PyYAML==5.3.1
+PyYAML==5.4
 pyzmq==18.1.1
 scikit-learn==0.23.0
 scipy==1.4.1
