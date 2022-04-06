@@ -28,7 +28,7 @@ nbformat==5.0.4
 ndlib==5.0.0
 netdispatch==0.0.5
 networkx==2.4
-notebook==6.0.3
+notebook==6.4.10
 numpy==1.18.1
 packaging==20.3
 pandas==1.0.0
